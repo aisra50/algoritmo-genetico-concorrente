@@ -44,11 +44,6 @@ int main (int argc, char **argv)
         free_populacao(filhos);
     }
 
-    for (int i = 0; i < pop.tam_populacao; i++) 
-    {
-        print_individuo(pop.individuos[i]);
-    }
-
     printf("Best:\n");
     print_individuo(pop.individuos[0]);
 
