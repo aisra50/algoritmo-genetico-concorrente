@@ -87,6 +87,8 @@ Populacao inicializa_populacao(int tam_populacao, int dimensao, double min, doub
         pop.individuos[i] = individuo_aleatorio(dimensao, pop.limite_inferior, pop.limite_superior);
     }
 
+    ordena_populacao_por_fitness(pop);
+
     return pop;
 }
 
