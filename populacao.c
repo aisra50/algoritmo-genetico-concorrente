@@ -1,6 +1,8 @@
 #include<stdlib.h>
 #include<math.h>
 #include<stdio.h>
+#include<string.h>
+
 #include"populacao.h"
 #include"variaveis-aleatorias.h"
 
@@ -170,6 +172,33 @@ void quick_sort_pop(Individuo *vetor, int lo, int hi)
 
     quick_sort_pop(vetor, lo, j);
     quick_sort_pop(vetor, j + 1, hi);
+}
+
+Individuo* amostra_uniforme(Populacao pop, int N) {
+    Individuo *copia = malloc(sizeof(Individuo) * pop.tam_populacao);
+    MEMCHECK(copia);
+
+    memcpy(copia, pop.individuos, sizeof(Individuo) * pop.tam_populacao);
+
+    fisher_yates_shuffle(copia, pop.tam_populacao);
+
+    Individuo *sample = malloc(sizeof(Individuo) * N);
+    MEMCHECK(sample);
+
+    for (int i = 0; i < N; i++) {
+        sample[i] = copia[i];  // ou copie profundamente se necessário
+    }
+
+    free(copia);
+    return sample;
+}
+
+void fisher_yates_shuffle(Individuo *vetor, int tam)
+{
+    for (int i = tam - 1; i > 0; i--) {
+        int j = rand() % (i + 1);
+        troca(vetor, i, j);
+    }
 }
 
 void troca(Individuo *vetor, int a, int b)

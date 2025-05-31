@@ -34,7 +34,7 @@ Individuo selecao_torneio(Populacao pop, int k)
     }
 
     for (int i = 0; i < k; i++) {
-        int r = rand() % (pop.tam_populacao + 1);
+        int r = rand() % pop.tam_populacao;
 
         if (pop.individuos[r].fitness == INFINITY) {
             fprintf(stderr, "ERRO: Torneio chamado em população que não tem todas as fitnesses inicializadas.\n");
@@ -47,7 +47,7 @@ Individuo selecao_torneio(Populacao pop, int k)
         }
     }
 
-    return melhor;
+    return copia_individuo(melhor);
 }
 
 Individuo recombinacao_blx_alpha(Individuo pai1, Individuo pai2, double alpha)
