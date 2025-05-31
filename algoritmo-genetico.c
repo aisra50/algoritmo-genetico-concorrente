@@ -50,6 +50,21 @@ Individuo selecao_torneio(Populacao pop, int k)
     return copia_individuo(melhor);
 }
 
+Populacao selecao(Populacao pop, double taxa_reproducao, int tam_torneio)
+{
+    int num_selecionados = (int)(pop.tam_populacao * taxa_reproducao);
+    int dimensao = pop.individuos[0].dimensao;
+    double min = pop.limite_inferior;
+    double max = pop.limite_superior;
+
+    Populacao pop_reprodutora = populacao_vazia(num_selecionados, dimensao, min, max);
+    for (int i = 0; i < num_selecionados; i++) {
+        pop_reprodutora.individuos[i] = selecao_torneio(pop, tam_torneio);
+    }
+
+    return pop_reprodutora;
+}
+
 Individuo recombinacao_blx_alpha(Individuo pai1, Individuo pai2, double alpha)
 {
     Individuo filho = inicializa_individuo(pai1.dimensao);
@@ -62,6 +77,26 @@ Individuo recombinacao_blx_alpha(Individuo pai1, Individuo pai2, double alpha)
     return filho;
 }
 
+Populacao recombinacao(Populacao pop_reprodutora, double alpha)
+{
+    int num_filhos = pop_reprodutora.tam_populacao / 2;
+    int dimensao = pop_reprodutora.individuos[0].dimensao;
+    double min = pop_reprodutora.limite_inferior;
+    double max = pop_reprodutora.limite_superior;
+    
+    Populacao filhos = populacao_vazia(num_filhos, dimensao, min, max);
+
+    for(int filhos_gerados = 0; filhos_gerados < filhos.tam_populacao; filhos_gerados++){
+        Individuo pai1, pai2;
+        pai1 = pop_reprodutora.individuos[filhos_gerados * 2];
+        pai2 = pop_reprodutora.individuos[filhos_gerados * 2 + 1];
+
+        filhos.individuos[filhos_gerados] = recombinacao_blx_alpha(pai1, pai2, alpha);
+    }
+
+    return filhos;
+}
+
 void mutacao_gaussiana(Individuo individuo)
 {
     int idx_gene_mutado = rand() % individuo.dimensao;
@@ -69,4 +104,17 @@ void mutacao_gaussiana(Individuo individuo)
     individuo.genes[idx_gene_mutado] = normal(individuo.genes[idx_gene_mutado], 0.2);
 
     return;
+}
+
+void mutacao(Populacao pop, double taxa_mutacao)
+{
+    int num_mutados = (int)(pop.tam_populacao * taxa_mutacao);
+
+    // Cópia "rasa" dos individuos da população "pop". Alterá-los altera "pop".
+    Individuo *mutantes = amostra_uniforme(pop, num_mutados);
+    for (int i = 0; i < num_mutados; i++) {
+        mutacao_gaussiana(mutantes[i]); // Funciona por ser cópia rasa.
+    }
+    
+    free(mutantes);
 }
