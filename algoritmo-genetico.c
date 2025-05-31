@@ -1,30 +1,7 @@
-#include<stdio.h>
-#include<stdlib.h>
 #include<math.h>
-#include<time.h>
+#include<stdlib.h>
 #include"algoritmo-genetico.h"
-
-#define PI 3.14159265359
-
-// double normal(double media, double desvio_padrao);
-
-int main (int argc, char **argv)
-{
-    int tam_pop = 10;
-    int dimensao = 2;
-
-    
-    srand(time(NULL)); rand(); // O primeiro número aleatório gerado parece ter uma forte relação linear com o horario, enviesando a amostragem.
-
-    Populacao pop = inicializa_populacao(tam_pop, dimensao, -5.12, 5.12);
-    computa_fitnesses(pop);
-
-    // for (int i = 0; i < 10; i++) {
-    //     printf("%lf\n", normal(0, 1));
-    // }
-
-    return 0;
-}
+#include"variaveis-aleatorias.h"
 
 void computa_fitnesses(Populacao pop) {
     for (int i = 0; i < pop.tam_populacao; i++) {
@@ -85,38 +62,11 @@ Individuo recombinacao_blx_alpha(Individuo pai1, Individuo pai2, double alpha)
     return filho;
 }
 
-// double normal(double media, double desvio_padrao) {
-//     static int tem_guardado = 0;
-//     static double guardado;
-    
-//     double u1, u2;
-//     double r, theta;
-
-//     if (tem_guardado) {
-//         tem_guardado = 0;
-//         return guardado;
-//     }
-
-//     do {
-//         u1 = uniforme(0, 1);
-//     } while (u1 <= 0);
-
-//     u2 = uniforme(0, 1);
-
-//     r = sqrt(-2 * log(u1)) * desvio_padrao;
-//     theta = 2 * PI * u2;
-
-//     tem_guardado = 1;
-//     guardado = r * cos(theta);
-
-//     return r * sin(theta);
-// }
-
 void mutacao_gaussiana(Individuo individuo)
 {
     int idx_gene_mutado = rand() % individuo.dimensao;
 
-    // individuo.genes[idx_gene_mutado] = normal(individuo.genes[idx_gene_mutado], 0.2);
+    individuo.genes[idx_gene_mutado] = normal(individuo.genes[idx_gene_mutado], 0.2);
 
     return;
 }
