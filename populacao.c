@@ -90,21 +90,24 @@ Populacao inicializa_populacao(int tam_populacao, int dimensao, double min, doub
     return pop;
 }
 
-void integra_filhos(Populacao pop_principal, Populacao pop_absorvida)
+void integra_filhos(Populacao *pop_principal, Populacao pop_absorvida)
 {
-    Individuo *pop_final = malloc(sizeof(*pop_principal.individuos) * pop_principal.tam_populacao);
+    Individuo *pop_final = malloc(sizeof(*pop_principal->individuos) * pop_principal->tam_populacao);
     MEMCHECK(pop_final);
 
     int it_principal = 0;
     int it_absorvida = 0;
     int num_selecionados = 0;
 
-    while (num_selecionados < pop_principal.tam_populacao) {
-        double fitness_principal = pop_principal.individuos[it_principal].fitness;
+    // Presume-se que pop_principal já esteja ordenada.
+    ordena_populacao_por_fitness(pop_absorvida);
+
+    while (num_selecionados < pop_principal->tam_populacao && it_absorvida < pop_absorvida.tam_populacao) {
+        double fitness_principal = pop_principal->individuos[it_principal].fitness;
         double fitness_absorvida = pop_absorvida.individuos[it_absorvida].fitness;
 
-        if (fitness_principal > fitness_absorvida) {
-            pop_final[num_selecionados] = copia_individuo(pop_principal.individuos[it_principal]);
+        if (fitness_principal < fitness_absorvida) {
+            pop_final[num_selecionados] = copia_individuo(pop_principal->individuos[it_principal]);
             it_principal++;
         }
         else {
@@ -115,8 +118,14 @@ void integra_filhos(Populacao pop_principal, Populacao pop_absorvida)
         num_selecionados++;
     }
 
-    free_populacao(pop_principal);
-    pop_principal.individuos = pop_final;
+    if (num_selecionados < pop_principal->tam_populacao) {
+        for (int i = num_selecionados; i < pop_principal->tam_populacao; i++) {
+            pop_final[i] = copia_individuo(pop_principal->individuos[i]);
+        }
+    }
+
+    free_populacao(*pop_principal);
+    pop_principal->individuos = pop_final;
     
     return;
 }

@@ -22,6 +22,7 @@ int main (int argc, char **argv)
     srand(time(NULL)); rand(); // O primeiro número aleatório gerado parece ter uma forte relação linear com o horario, enviesando a amostragem.
 
     Populacao pop = inicializa_populacao(tam_pop, dimensao, LIM_MIN, LIM_MAX);
+    ordena_populacao_por_fitness(pop);
     computa_fitnesses(pop);
     num_avaliacoes_funcao += pop.tam_populacao;
 
