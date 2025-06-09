@@ -3,29 +3,53 @@
 #include<math.h>
 #include<time.h>
 #include"algoritmo-genetico.h"
+#include"timer.h"
 
-#define NUM_MAX_AVALIACOES 1000
 #define LIM_MIN -5.12
 #define LIM_MAX 5.12
 
 #define ALPHA 0.5
 
+int num_threads;
+
 int main (int argc, char **argv)
 {
-    int tam_pop = 100;
-    int dimensao = 2;
-    int tam_torneio = 3;
+    double tempo_inicio, tempo_fim, delta;
+    int tam_torneio = 15;
     double taxa_reproducao = 0.8;
-    double taxa_mutacao = 0.05;
+    double taxa_mutacao = 0.3;
     int num_avaliacoes_funcao = 0;
+
+    int tam_pop, dimensao, num_max_avaliacoes; // argumentos de linha de comando
+
+    #ifdef CONCORRENTE
+    if (argc != 5) {
+        fprintf(stderr, "ERRO: Uso: %s <tam_pop> <dimensao> <num_max_avaliacoes> <num_threads>\n", argv[0]);
+        exit(1);
+    }
+
+    num_threads = atoi(argv[4]);
+    #else
+    if (argc != 4) {
+        fprintf(stderr, "ERRO: Uso: %s <tam_pop> <dimensao> <num_max_avaliacoes>\n", argv[0]);
+        exit(1);
+    }
+    #endif
+
+    tam_pop = atoi(argv[1]);
+    dimensao = atoi(argv[2]);
+    num_max_avaliacoes = atoi(argv[3]);
 
     srand(time(NULL)); rand(); // O primeiro número aleatório gerado parece ter uma forte relação linear com o horario, enviesando a amostragem.
 
+    GET_TIME(tempo_inicio);
     Populacao pop = inicializa_populacao(tam_pop, dimensao, LIM_MIN, LIM_MAX);
+    
     computa_fitnesses(pop);
+    ordena_populacao_por_fitness(pop);
     num_avaliacoes_funcao += pop.tam_populacao;
 
-    while (num_avaliacoes_funcao < NUM_MAX_AVALIACOES) {
+    while (num_avaliacoes_funcao < num_max_avaliacoes) {
         // Seleção
         Populacao pop_reprodutora = selecao(pop, taxa_reproducao, tam_torneio);
 
@@ -38,14 +62,20 @@ int main (int argc, char **argv)
         
         // Elitismo
         /* Mantém os melhores indivíduos, mantendo o tamanho original da população */
+
         computa_fitnesses(filhos);
         num_avaliacoes_funcao += filhos.tam_populacao;
         integra_filhos(&pop, filhos); // Faz cópias dos indivíduos em "filhos". Dealoca membros de pop que forem descartados
         free_populacao(filhos);
     }
 
-    printf("Best:\n");
-    print_individuo(pop.individuos[0]);
+    GET_TIME(tempo_fim);
+    delta = tempo_fim - tempo_inicio;
+
+    printf("Best fitness: %lf\n", pop.individuos[0].fitness);
+
+    printf("Tempo de execução: %lf segundos\n", delta);
+
 
     return 0;
 }

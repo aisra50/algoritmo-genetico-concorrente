@@ -39,7 +39,7 @@ void print_individuo(Individuo individuo)
     printf("%lf", individuo.genes[individuo.dimensao - 1]);
     printf("]");
 
-    printf(" Fitness: %lf\n", individuo.fitness);
+    printf("\nFitness: %lf\n", individuo.fitness);
     
     return;
 }

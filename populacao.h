@@ -1,3 +1,6 @@
+#ifndef POPULACAO_H
+#define POPULACAO_H
+
 #include<stdio.h>
 #define MEMCHECK(X) if ((X) == NULL) {fprintf(stderr, "ERRO: Erro ao alocar memória\n"); exit(1);}
 
@@ -32,5 +35,6 @@ void troca(Individuo *vetor, int a, int b);
 // Parte da estrutura geral do algoritmo
 Populacao inicializa_populacao(int tam_populacao, int dimensao, double min, double max); // Gera tam_populacao individuos com genes distribuidos uniformemente entre min e max
 void integra_filhos(Populacao *pop_principal, Populacao pop_absorvida);
-void computa_fitnesses(Populacao pop);
 Individuo* amostra_uniforme(Populacao pop, int N);
+
+#endif

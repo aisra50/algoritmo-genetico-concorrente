@@ -3,12 +3,68 @@
 #include"algoritmo-genetico.h"
 #include"variaveis-aleatorias.h"
 
+#ifdef CONCORRENTE
+
+#include<pthread.h>
+
+typedef struct {
+    Individuo *individuos;
+    int inicio;
+    int fim;
+} Argumentos;
+
+extern int num_threads;
+
+void *computa_fitnesses_task(void *args) {
+    Argumentos *argumentos = (Argumentos *)args;
+    
+    int inicio = argumentos->inicio;
+    int fim = argumentos->fim;
+    Individuo *individuos = argumentos->individuos;
+
+    for (int i = inicio; i < fim; i++) {
+        Individuo *it = &individuos[i];
+        it->fitness = rosenbrock(individuos[i]);
+    }
+}
+
+void computa_fitnesses(Populacao pop) {
+    int fatia = pop.tam_populacao / num_threads;
+    Argumentos args[num_threads];
+    pthread_t tids[num_threads];
+
+    for (int i = 0; i < num_threads; i++) {
+        args[i].inicio = i * fatia;
+        args[i].individuos = pop.individuos;
+
+        if (i == num_threads - 1) { // A última thread fica com o resto se não for divisível
+            args[i].fim = pop.tam_populacao;
+        }
+        else {
+            args[i].fim = args[i].inicio + fatia;
+        }
+
+        pthread_create(&tids[i], NULL, computa_fitnesses_task, &args[i]);
+    }
+
+    for (int i = 0; i < num_threads; i++) {
+        pthread_join(tids[i], NULL);
+    }
+
+    return;
+}
+
+#else
+
 void computa_fitnesses(Populacao pop) {
     for (int i = 0; i < pop.tam_populacao; i++) {
         Individuo *it = &pop.individuos[i];
         it->fitness = rosenbrock(*it);
     }
+    return;
 }
+
+#endif
 
 double rosenbrock(Individuo individuo)
 {
@@ -72,6 +128,12 @@ Individuo recombinacao_blx_alpha(Individuo pai1, Individuo pai2, double alpha)
     
     for (int i = 0; i < filho.dimensao; i++) { // filho = pai1 + beta * (pai2 - pai1)
         filho.genes[i] = pai1.genes[i] + beta * (pai2.genes[i] - pai1.genes[i]);
+        if (filho.genes[i] > 5.12) {
+            filho.genes[i] = 5.12;
+        }
+        if (filho.genes[i] < -5.12) {
+            filho.genes[i] = -5.12;
+        }
     }
 
     return filho;
@@ -101,7 +163,13 @@ void mutacao_gaussiana(Individuo individuo)
 {
     int idx_gene_mutado = rand() % individuo.dimensao;
 
-    individuo.genes[idx_gene_mutado] = normal(individuo.genes[idx_gene_mutado], 0.2);
+    individuo.genes[idx_gene_mutado] = normal(individuo.genes[idx_gene_mutado], 0.3);
+    if (individuo.genes[idx_gene_mutado] > 5.12) {
+        individuo.genes[idx_gene_mutado] = 5.12;
+    }
+    if (individuo.genes[idx_gene_mutado] < -5.12) {
+        individuo.genes[idx_gene_mutado] = -5.12;
+    }
 
     return;
 }
