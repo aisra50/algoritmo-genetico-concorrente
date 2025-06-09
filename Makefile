@@ -16,8 +16,17 @@ tempos: tempos.c $(bibliotecas_proprias)
 	@gcc -o tempos tempos.c $(bibliotecas_proprias) -lm -lpthread $(flags)
 	@echo Feito!
 
+historico_seq: main.c $(bibliotecas_proprias)
+	@echo compilando histórico sequencial...
+	@gcc -DHISTORICO -o historico_seq main.c $(bibliotecas_proprias) -lm $(flags)
+	@echo Feito!
+
+historico_conc: main.c $(bibliotecas_proprias)
+	@echo compilando histórico concorrente...
+	@gcc -DCONCORRENTE -DHISTORICO -o historico_conc main.c $(bibliotecas_proprias) -lm -lpthread $(flags)
+	@echo Feito!
 
 .PHONY: clean
 clean:
 	@echo limpando...
-	@rm -f sequencial tempos concorrente
+	@rm -f sequencial tempos concorrente historico_conc historico_seq

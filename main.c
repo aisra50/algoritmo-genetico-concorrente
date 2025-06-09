@@ -19,7 +19,6 @@ int main (int argc, char **argv)
     double taxa_reproducao = 0.8;
     double taxa_mutacao = 0.3;
     int num_avaliacoes_funcao = 0;
-
     int tam_pop, dimensao, num_max_avaliacoes; // argumentos de linha de comando
 
     #ifdef CONCORRENTE
@@ -49,6 +48,10 @@ int main (int argc, char **argv)
     ordena_populacao_por_fitness(pop);
     num_avaliacoes_funcao += pop.tam_populacao;
 
+    #ifdef HISTORICO
+    printf("%lf, ", pop.individuos[0].fitness);
+    #endif
+
     while (num_avaliacoes_funcao < num_max_avaliacoes) {
         // Seleção
         Populacao pop_reprodutora = selecao(pop, taxa_reproducao, tam_torneio);
@@ -67,15 +70,22 @@ int main (int argc, char **argv)
         num_avaliacoes_funcao += filhos.tam_populacao;
         integra_filhos(&pop, filhos); // Faz cópias dos indivíduos em "filhos". Dealoca membros de pop que forem descartados
         free_populacao(filhos);
+
+        #ifdef HISTORICO
+        printf("%lf, ", pop.individuos[0].fitness);
+        #endif
     }
 
     GET_TIME(tempo_fim);
     delta = tempo_fim - tempo_inicio;
 
+    #ifndef HISTORICO
     printf("Best fitness: %lf\n", pop.individuos[0].fitness);
 
     printf("Tempo de execução: %lf segundos\n", delta);
-
+    #else
+    printf("tempo_execucao: %lf\n", delta);
+    #endif
 
     return 0;
 }
