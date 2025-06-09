@@ -1,12 +1,23 @@
-sequencial: main.c algoritmo-genetico.c populacao.c variaveis-aleatorias.c
-	gcc -o sequencial main.c algoritmo-genetico.c  populacao.c variaveis-aleatorias.c -lm
+bibliotecas_proprias := algoritmo-genetico.c populacao.c variaveis-aleatorias.c
+flags := -Wall -Wextra
 
-concorrente: main.c algoritmo-genetico.c populacao.c variaveis-aleatorias.c
-	gcc -DCONCORRENTE -o concorrente main.c algoritmo-genetico.c populacao.c variaveis-aleatorias.c -lm -lpthread
+sequencial: main.c $(bibliotecas_proprias)
+	@echo compilando versão sequencial...
+	@gcc -o sequencial main.c $(bibliotecas_proprias) -lm $(flags)
+	@echo Feito!
 
-tempos: tempos.c algoritmo-genetico.c populacao.c variaveis-aleatorias.c
-	gcc -o tempos tempos.c algoritmo-genetico.c populacao.c variaveis-aleatorias.c -lm -lpthread
+concorrente: main.c $(bibliotecas_proprias)
+	@echo compilando versão concorrente...
+	@gcc -DCONCORRENTE -o concorrente main.c $(bibliotecas_proprias) -lm -lpthread $(flags)
+	@echo Feito!
+
+tempos: tempos.c $(bibliotecas_proprias)
+	@echo compilando medidas de tempo...
+	@gcc -o tempos tempos.c $(bibliotecas_proprias) -lm -lpthread $(flags)
+	@echo Feito!
+
 
 .PHONY: clean
 clean:
-	rm sequencial tempos concorrente
+	@echo limpando...
+	@rm -f sequencial tempos concorrente

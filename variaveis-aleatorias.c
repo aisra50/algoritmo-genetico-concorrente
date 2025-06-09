@@ -32,7 +32,7 @@ double normal(double media, double desvio_padrao) { // Amostra uma variável ale
     theta = 2 * PI * u2;
 
     tem_guardado = 1;
-    guardado = r * cos(theta);
+    guardado = r * cos(theta) + media;
 
-    return r * sin(theta);
+    return r * sin(theta) + media;
 }

@@ -26,6 +26,8 @@ void *computa_fitnesses_task(void *args) {
         Individuo *it = &individuos[i];
         it->fitness = rosenbrock(individuos[i]);
     }
+
+    pthread_exit(NULL);
 }
 
 void computa_fitnesses(Populacao pop) {
@@ -85,7 +87,7 @@ Individuo selecao_torneio(Populacao pop, int k)
     Individuo melhor;
 
     if (k < 1) {
-        fprintf(stderr, "ERRO: Torneio chamado com k = %d - Parâmetro inválido\n");
+        fprintf(stderr, "ERRO: Torneio chamado com k = %d - Parâmetro inválido\n", k);
         exit(2);
     }
 
@@ -109,11 +111,10 @@ Individuo selecao_torneio(Populacao pop, int k)
 Populacao selecao(Populacao pop, double taxa_reproducao, int tam_torneio)
 {
     int num_selecionados = (int)(pop.tam_populacao * taxa_reproducao);
-    int dimensao = pop.individuos[0].dimensao;
     double min = pop.limite_inferior;
     double max = pop.limite_superior;
 
-    Populacao pop_reprodutora = populacao_vazia(num_selecionados, dimensao, min, max);
+    Populacao pop_reprodutora = populacao_vazia(num_selecionados, min, max);
     for (int i = 0; i < num_selecionados; i++) {
         pop_reprodutora.individuos[i] = selecao_torneio(pop, tam_torneio);
     }
@@ -142,11 +143,10 @@ Individuo recombinacao_blx_alpha(Individuo pai1, Individuo pai2, double alpha)
 Populacao recombinacao(Populacao pop_reprodutora, double alpha)
 {
     int num_filhos = pop_reprodutora.tam_populacao / 2;
-    int dimensao = pop_reprodutora.individuos[0].dimensao;
     double min = pop_reprodutora.limite_inferior;
     double max = pop_reprodutora.limite_superior;
     
-    Populacao filhos = populacao_vazia(num_filhos, dimensao, min, max);
+    Populacao filhos = populacao_vazia(num_filhos, min, max);
 
     for(int filhos_gerados = 0; filhos_gerados < filhos.tam_populacao; filhos_gerados++){
         Individuo pai1, pai2;

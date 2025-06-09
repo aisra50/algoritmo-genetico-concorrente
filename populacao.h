@@ -25,7 +25,7 @@ Individuo individuo_aleatorio(int dimensao, double min, double max);
 void print_individuo(Individuo);
 Individuo copia_individuo(Individuo individuo);
 void free_individuo(Individuo individuo);
-Populacao populacao_vazia(int tam_populacao, int dimensao, double min, double max);
+Populacao populacao_vazia(int tam_populacao, double min, double max);
 void ordena_populacao_por_fitness(Populacao pop);
 void free_populacao(Populacao pop);
 void quick_sort_pop(Individuo *vetor, int lo, int hi);

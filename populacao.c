@@ -65,7 +65,7 @@ void free_individuo(Individuo individuo)
     free(individuo.genes);
 }
 
-Populacao populacao_vazia(int tam_populacao, int dimensao, double min, double max)
+Populacao populacao_vazia(int tam_populacao, double min, double max)
 {
     Populacao pop;
 
@@ -83,7 +83,7 @@ Populacao inicializa_populacao(int tam_populacao, int dimensao, double min, doub
 {
     Populacao pop;
 
-    pop = populacao_vazia(tam_populacao, dimensao, min, max);
+    pop = populacao_vazia(tam_populacao, min, max);
 
     for (int i = 0; i < pop.tam_populacao; i++) {
         pop.individuos[i] = individuo_aleatorio(dimensao, pop.limite_inferior, pop.limite_superior);
@@ -159,9 +159,9 @@ void quick_sort_pop(Individuo *vetor, int lo, int hi)
             j--;
         
         /* indices antes de j (incluso) têm fitness <= valor_pivo,
-        /* e indices depois de i (incluso) tem fitness >= valor pivo
-        /* i.e., j é o último indice da partição esquerda e i o primeiro 
-        /* da partição direita */
+        * e indices depois de i (incluso) tem fitness >= valor pivo
+        * i.e., j é o último indice da partição esquerda e i o primeiro 
+        * da partição direita */
         if (i >= j)
             break;
             
